@@ -128,6 +128,22 @@
       } else {
         sumEl.style.display = "none";
       }
+
+      var nEl = document.getElementById("csv-preview-n");
+      var preEl = document.getElementById("csv-preview");
+      if (nEl) nEl.textContent = data.max_runners != null ? data.max_runners : "—";
+      if (preEl) {
+        var preview = data.csv_preview;
+        if (!preview || preview.length === 0) {
+          preEl.textContent = "No runner data yet.";
+        } else {
+          preEl.textContent = preview.map(function (r) {
+            var line = "NR." + r.runner_number + "  LAP " + r.lap_number + "  TIME " + (r.lap_time_str || "—");
+            if (r.distance_str) line += "  " + r.distance_str;
+            return line;
+          }).join("\n");
+        }
+      }
     }).catch(function () {});
   }
 

@@ -10,7 +10,7 @@ from flask import Flask, jsonify, render_template, request
 
 from .config.manager import init_config_manager, get_config_manager
 from .display.controller import init_display_controller, get_display_controller
-from .ingest.csv_fetcher import start_csv_poller, get_fetch_status
+from .ingest.csv_fetcher import start_csv_poller, get_fetch_status, get_race_state
 from .clock.clock import init_clock, get_clock
 
 # Uptime start (set when app is created)
@@ -112,9 +112,10 @@ def create_app(config_path: Path | None = None) -> Flask:
 
     @app.route("/status", methods=["GET"])
     def status():
-        """Health/status JSON including CSV fetch state and clock."""
+        """Health/status JSON including CSV fetch state, clock, and first n runners (n = max_runners)."""
         uptime_s = time.time() - _start_time if _start_time else 0
         clock = get_clock()
+        fetch = get_fetch_status()
         out = {
             "current_time_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "uptime_seconds": round(uptime_s, 2),
@@ -124,8 +125,26 @@ def create_app(config_path: Path | None = None) -> Flask:
                 "elapsed_seconds": round(clock.get_elapsed_seconds(), 2),
                 "elapsed_display": clock.get_elapsed_display(),
             },
-            **get_fetch_status(),
+            **fetch,
         }
+        # Include first max_runners lines of current CSV (runner) data for admin preview
+        race_state = get_race_state()
+        max_runners = int(
+            (get_config_manager().get_config().get("display") or {}).get("max_runners", 10)
+        )
+        out["max_runners"] = max_runners
+        if race_state and race_state.runners:
+            out["csv_preview"] = [
+                {
+                    "runner_number": r.runner_number,
+                    "lap_number": r.lap_number,
+                    "lap_time_str": r.lap_time_str,
+                    "distance_str": r.distance_str,
+                }
+                for r in race_state.runners[:max_runners]
+            ]
+        else:
+            out["csv_preview"] = []
         return jsonify(out)
 
     @app.route("/api/config", methods=["GET"])

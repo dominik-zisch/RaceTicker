@@ -1,32 +1,375 @@
-/* Admin UI – simple flat layout */
+/* Admin UI – simple, elegant, flat, modern */
+
+:root {
+  --bg-page: #f8f9fa;
+  --bg-card: #ffffff;
+  --border: #e2e6ea;
+  --text: #1a1d21;
+  --text-muted: #5c6370;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-subtle: #eff6ff;
+  --success: #059669;
+  --success-bg: #ecfdf5;
+  --error: #dc2626;
+  --error-bg: #fef2f2;
+  --warning: #b45309;
+  --warning-bg: #fffbeb;
+  --radius: 8px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: system-ui, sans-serif;
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 1rem;
-  background: #f5f5f5;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg-page);
+  margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* Header – richer, more distinctive */
 header {
+  background: linear-gradient(152deg, #1e3a8a 0%, #2563eb 45%, #3b82f6 100%);
+  padding: 1.5rem 1.5rem 1.6rem;
   margin-bottom: 1.5rem;
+  box-shadow: 0 4px 14px rgba(30, 58, 138, 0.35);
+  position: relative;
+  overflow: hidden;
 }
-header h1 { margin: 0 0 0.25rem 0; font-size: 1.5rem; }
-header a { color: #0066cc; }
+
+header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+header h1 {
+  margin: 0 0 0.6rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+header p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+header a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+header a:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Main content – 2 columns: left = Race profile + Ticker, right = Clock + Mode + Data status.
+   Each column stacks its sections with no cross-column alignment. */
+main {
+  display: flex;
+  gap: 1.25rem;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem;
+  align-items: flex-start;
+}
+
+main .col-left,
+main .col-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+main .col-left section,
+main .col-right section {
+  margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+  main {
+    flex-direction: column;
+    max-width: 520px;
+  }
+}
+
+/* Sections as cards */
 section {
-  background: #fff;
-  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
   margin-bottom: 1rem;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow);
 }
-section h2 { margin: 0 0 0.75rem 0; font-size: 1rem; font-weight: 600; }
-p { margin: 0.5rem 0; }
-label { display: inline-block; }
-input[type="number"], input[type="text"], input[type="url"] { width: 8rem; margin-left: 0.25rem; }
-input[type="color"] { width: 2.5rem; height: 1.75rem; margin-left: 0.25rem; padding: 2px; cursor: pointer; vertical-align: middle; }
-button { margin-right: 0.5rem; padding: 0.35rem 0.75rem; cursor: pointer; }
-#clock-display { font-family: monospace; font-size: 1.5rem; }
-.message { margin-top: 1rem; font-size: 0.9rem; color: #0a0; }
-.message.error { color: #c00; }
-.status-ok { color: #0a0; font-size: 0.9rem; }
-.status-error { color: #c00; font-size: 0.9rem; }
-.status-recovery { color: #660; font-size: 0.9rem; }
+
+section h2 {
+  margin: 0 0 1rem 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* Form rows */
+section p {
+  margin: 0 0 0.85rem 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+section p:last-child {
+  margin-bottom: 0;
+}
+
+label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Inputs – flat, clean */
+input[type="number"],
+input[type="text"],
+input[type="url"] {
+  width: 8.5rem;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus,
+input[type="url"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+input[type="color"] {
+  width: 2.75rem;
+  height: 2rem;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--bg-page);
+}
+
+/* Selects */
+select {
+  padding: 0.5rem 2rem 0.5rem 0.65rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235c6370' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+/* Buttons */
+button {
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button:hover {
+  background: var(--accent-hover);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button + button {
+  margin-left: 0.5rem;
+}
+
+/* Checkbox */
+input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* Clock display */
+#clock-display {
+  font-family: "SF Mono", "Monaco", "Consolas", monospace;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+
+/* Status messages */
+#message {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+#message:not(:empty) {
+  background: var(--success-bg);
+  color: var(--success);
+  border-color: rgba(5, 150, 105, 0.2);
+}
+
+#message.error {
+  background: var(--error-bg);
+  color: var(--error);
+  border-color: rgba(220, 38, 38, 0.2);
+}
+
+/* Data status section */
+.status-ok {
+  color: var(--success);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status-error {
+  color: var(--error);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status-recovery {
+  color: var(--warning);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+#status-box p {
+  margin-bottom: 0.5rem;
+}
+
+#status-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* Current CSV data preview */
+#csv-preview-wrap {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+#csv-preview-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.csv-preview {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-family: "SF Mono", "Monaco", "Consolas", monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow-x: auto;
+  white-space: pre;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+/* Custom font input (shown by JS when "Other" is selected) */
+#font_family_custom {
+  width: 14rem;
+}
+
+/* Profile URLs area */
+#profile-urls {
+  margin-top: 0.75rem;
+}
+
+#profile-urls label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+#profile-urls input {
+  width: 100%;
+  max-width: 100%;
+}

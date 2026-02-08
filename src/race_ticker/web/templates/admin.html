@@ -13,15 +13,16 @@
   </header>
 
   <main>
-    <section id="race-profile">
-      <h2>Race profile</h2>
-      <p>
-        <label>Active profile <select id="active-race"></select></label>
-      </p>
-      <div id="profile-urls"></div>
-    </section>
+    <div class="col-left">
+      <section id="race-profile">
+        <h2>Race profile</h2>
+        <p>
+          <label>Active profile <select id="active-race"></select></label>
+        </p>
+        <div id="profile-urls"></div>
+      </section>
 
-    <section id="ticker-settings">
+      <section id="ticker-settings">
       <h2>Ticker</h2>
       <p><label>Background color <input type="color" id="background_color" value="#000000"></label></p>
       <p><label>Text color <input type="color" id="text_color" value="#ff9900"></label></p>
@@ -65,7 +66,9 @@
       <p><label>Race time every <input type="number" id="insert_every_loops" min="1"> loops</label></p>
       <p><button type="button" id="save-ticker">Save ticker settings</button></p>
     </section>
+    </div>
 
+    <div class="col-right">
     <section id="clock">
       <h2>Race clock</h2>
       <p id="clock-display">--:--:--</p>
@@ -86,7 +89,12 @@
       <p id="status-summary" class="status-ok"></p>
       <p id="status-error" class="status-error"></p>
       <p id="status-recovery" class="status-recovery"></p>
+      <div id="csv-preview-wrap">
+        <h3 id="csv-preview-title">Current CSV data (first <span id="csv-preview-n">—</span> runners)</h3>
+        <pre id="csv-preview" class="csv-preview"></pre>
+      </div>
     </section>
+    </div>
   </main>
 
   <p id="message" class="message" aria-live="polite"></p>
