@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Ticker Display</title>
+    <style>
+        html, body { margin: 0; padding: 0; background: #000; height: 100%; }
+        body { min-height: 100%; }
+    </style>
+</head>
+<body>
+  <canvas id="ticker-canvas"></canvas>
+  <script src="{{ url_for('static', filename='display.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+app:
+  host: 0.0.0.0
+  port: 5001
+mode:
+  source: live
+  freeze_updates: false
+races:
+  active_race_id: race_10k
+  profiles:
+    race_10k:
+      name: 10K
+      csv_url: https://egs-eventi.s3.amazonaws.com/00000000/00090000/00093200/00093206/exportevodatatest.csv
+    race_half:
+      name: Half Marathon
+      csv_url: https://egs-eventi.s3.amazonaws.com/00000000/00090000/00093200/00093206/exportevodatatest.csv
+    race_full:
+      name: Marathon
+      csv_url: https://egs-eventi.s3.amazonaws.com/00000000/00090000/00093200/00093206/exportevodatatest.csv
+csv:
+  poll_interval_s: 10
+  timeout_s: 5
+display:
+  background_color: '#000000'
+  text_color: '#ffa200'
+  separator: ' // '
+  template: NR.{runner:02d} LAP {lap} TIME {lap_time}
+  max_runners: 3
+  sort_runners: csv_order
+ticker:
+  font_family: monospace
+  font_size_px: 64
+  letter_spacing_px: 1
+  y_px: 120
+  speed_px_s: 180
+  fps: 30
+  pixel_snap: true
+race_time:
+  enabled: true
+  insert_every_loops: 3
+  insert_every_seconds: null
+clock:
+  state: stopped
+  started_at_utc: null
+  accumulated_s: 0

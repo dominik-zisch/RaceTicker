@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Race Ticker Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Race Ticker Admin</h1>
+    <p><a href="/display" target="_blank">Open display</a> · <a href="/status" target="_blank">Status</a></p>
+  </header>
+
+  <main>
+    <section id="race-profile">
+      <h2>Race profile</h2>
+      <p>
+        <label>Active profile <select id="active-race"></select></label>
+      </p>
+      <div id="profile-urls"></div>
+    </section>
+
+    <section id="ticker-settings">
+      <h2>Ticker</h2>
+      <p><label>Background color <input type="color" id="background_color" value="#000000"></label></p>
+      <p><label>Text color <input type="color" id="text_color" value="#ff9900"></label></p>
+      <p><label>Separator <input type="text" id="separator" placeholder=" // "></label></p>
+      <p><label>Max runners <input type="number" id="max_runners" min="1" max="10"></label></p>
+      <p>
+        <label>Sort runners
+          <select id="sort_runners">
+            <option value="runner">By runner number</option>
+            <option value="csv_order">CSV order</option>
+          </select>
+        </label>
+      </p>
+      <p><label>Speed (px/s) <input type="number" id="speed_px_s" min="1" step="1"></label></p>
+      <p>
+        <label>Font family
+          <select id="font_family">
+            <option value="monospace">monospace (generic)</option>
+            <option value="Courier New, monospace">Courier New</option>
+            <option value="Consolas, monospace">Consolas</option>
+            <option value="Menlo, Monaco, monospace">Menlo</option>
+            <option value="Monaco, monospace">Monaco</option>
+            <option value="Ubuntu Mono, monospace">Ubuntu Mono</option>
+            <option value="Liberation Mono, monospace">Liberation Mono</option>
+            <option value="DejaVu Sans Mono, monospace">DejaVu Sans Mono</option>
+            <option value="Droid Sans Mono, monospace">Droid Sans Mono</option>
+            <option value="Source Code Pro, monospace">Source Code Pro</option>
+            <option value="Fira Code, monospace">Fira Code</option>
+            <option value="JetBrains Mono, monospace">JetBrains Mono</option>
+            <option value="IBM Plex Mono, monospace">IBM Plex Mono</option>
+            <option value="Courier Prime, monospace">Courier Prime</option>
+            <option value="__other__">Other…</option>
+          </select>
+          <input type="text" id="font_family_custom" placeholder="e.g. My Font, monospace" style="display:none; width:12rem; margin-left:0.25rem;">
+        </label>
+      </p>
+      <p><label>Font size (px) <input type="number" id="font_size_px" min="1"></label></p>
+      <p><label>Y position (px) <input type="number" id="y_px" min="0"></label></p>
+      <p><label>FPS <input type="number" id="fps" min="1" max="120"></label></p>
+      <p><label>Poll interval (s) <input type="number" id="poll_interval_s" min="1" step="0.5"></label></p>
+      <p><label>Race time every <input type="number" id="insert_every_loops" min="1"> loops</label></p>
+      <p><button type="button" id="save-ticker">Save ticker settings</button></p>
+    </section>
+
+    <section id="clock">
+      <h2>Race clock</h2>
+      <p id="clock-display">--:--:--</p>
+      <p>
+        <button type="button" id="clock-start">Start</button>
+        <button type="button" id="clock-pause">Pause</button>
+        <button type="button" id="clock-reset">Reset</button>
+      </p>
+    </section>
+
+    <section id="mode">
+      <h2>Mode</h2>
+      <p><label><input type="checkbox" id="freeze"> Freeze display updates</label></p>
+    </section>
+
+    <section id="status-box">
+      <h2>Data status</h2>
+      <p id="status-summary" class="status-ok"></p>
+      <p id="status-error" class="status-error"></p>
+      <p id="status-recovery" class="status-recovery"></p>
+    </section>
+  </main>
+
+  <p id="message" class="message" aria-live="polite"></p>
+  <script src="{{ url_for('static', filename='admin.js') }}"></script>
+</body>
+</html>
