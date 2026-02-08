@@ -12,12 +12,14 @@ def build_default_payload(config: dict[str, Any]) -> dict[str, Any]:
     ticker = config.get("ticker", {})
     display = config.get("display", {})
     race_time = config.get("race_time", {})
+    enabled = race_time.get("enabled", True)
+    show_every_loops = race_time.get("insert_every_loops", 3) if enabled else 0
     return {
         "version": 1,
         "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "ticker_text": "NR.01 LAP 0 TIME 0:00 // NR.02 LAP 0 TIME 0:00",
         "race_time_text": "RACE TIME: 0:00:00",
-        "show_race_time_every_loops": race_time.get("insert_every_loops", 3),
+        "show_race_time_every_loops": show_every_loops,
         "style": {
             "background_color": display.get("background_color", "#000000"),
             "font_family": ticker.get("font_family", "monospace"),
@@ -84,7 +86,8 @@ class DisplayController:
             self._next_version += 1
         current["version"] = v
         current["generated_at_utc"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        current["show_race_time_every_loops"] = race_time.get("insert_every_loops", 3)
+        enabled = race_time.get("enabled", True)
+        current["show_race_time_every_loops"] = race_time.get("insert_every_loops", 3) if enabled else 0
         current["style"] = {
             "background_color": display.get("background_color", "#000000"),
             "font_family": ticker.get("font_family", "monospace"),

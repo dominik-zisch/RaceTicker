@@ -85,6 +85,7 @@
     document.getElementById("y_px").value = t.y_px != null ? t.y_px : 120;
     document.getElementById("fps").value = (cfg.ticker || {}).fps != null ? cfg.ticker.fps : 30;
     document.getElementById("poll_interval_s").value = (cfg.csv || {}).poll_interval_s != null ? cfg.csv.poll_interval_s : 10;
+    document.getElementById("race_time_enabled").checked = (cfg.race_time || {}).enabled !== false;
     document.getElementById("insert_every_loops").value = (cfg.race_time || {}).insert_every_loops != null ? cfg.race_time.insert_every_loops : 3;
 
     document.getElementById("freeze").checked = !!(cfg.mode || {}).freeze_updates;
@@ -200,7 +201,10 @@
         fps: Number(document.getElementById("fps").value) || 30
       },
       csv: { poll_interval_s: Number(document.getElementById("poll_interval_s").value) || 10 },
-      race_time: { insert_every_loops: Number(document.getElementById("insert_every_loops").value) || 3 }
+      race_time: {
+        enabled: document.getElementById("race_time_enabled").checked,
+        insert_every_loops: Number(document.getElementById("insert_every_loops").value) || 3
+      }
     };
     api("/api/config", { method: "POST", body: JSON.stringify(patch) })
       .then(function (r) {

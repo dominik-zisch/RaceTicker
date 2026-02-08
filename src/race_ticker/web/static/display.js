@@ -63,8 +63,8 @@
           return;
         }
         loopCount++;
-        const everyLoops = payload.show_race_time_every_loops || 3;
-        if (loopCount % everyLoops === 0) {
+        const everyLoops = payload.show_race_time_every_loops != null ? payload.show_race_time_every_loops : 3;
+        if (everyLoops > 0 && loopCount % everyLoops === 0) {
           fetch("/api/clock")
             .then(function (r) { return r.json(); })
             .then(function (clock) {

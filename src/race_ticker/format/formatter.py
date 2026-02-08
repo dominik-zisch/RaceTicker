@@ -41,12 +41,14 @@ def build_payload(
     race_time_config = config.get("race_time", {})
     now_utc = datetime.now(timezone.utc)
     ticker_text = format_ticker_text(race_state, config)
+    enabled = race_time_config.get("enabled", True)
+    show_every_loops = race_time_config.get("insert_every_loops", 3) if enabled else 0
     return {
         "version": version,
         "generated_at_utc": now_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "ticker_text": ticker_text,
         "race_time_text": f"RACE TIME: {race_time_str}",
-        "show_race_time_every_loops": race_time_config.get("insert_every_loops", 3),
+        "show_race_time_every_loops": show_every_loops,
         "style": {
             "background_color": display.get("background_color", "#000000"),
             "font_family": ticker.get("font_family", "monospace"),

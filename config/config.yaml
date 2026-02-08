@@ -8,13 +8,13 @@ races:
   active_race_id: race_10k
   profiles:
     race_10k:
-      name: 10K
+      name: 15K
       csv_url: https://egs-eventi.s3.amazonaws.com/00000000/00090000/00093200/00093206/exportevodatatest.csv
     race_half:
-      name: Half Marathon
+      name: 50K
       csv_url: https://egs-eventi.s3.amazonaws.com/00000000/00090000/00093200/00093206/exportevodatatest.csv
     race_full:
-      name: Marathon
+      name: 100K
       csv_url: https://egs-eventi.s3.amazonaws.com/00000000/00090000/00093200/00093206/exportevodatatest.csv
 csv:
   poll_interval_s: 10
@@ -28,9 +28,9 @@ display:
   sort_runners: csv_order
 ticker:
   font_family: monospace
-  font_size_px: 64
+  font_size_px: 170
   letter_spacing_px: 1
-  y_px: 120
+  y_px: 300
   speed_px_s: 180
   fps: 30
   pixel_snap: true
@@ -39,6 +39,6 @@ race_time:
   insert_every_loops: 3
   insert_every_seconds: null
 clock:
-  state: running
-  started_at_utc: '2026-02-08T17:07:57Z'
-  accumulated_s: 0.0
+  state: stopped
+  started_at_utc: null
+  accumulated_s: 0

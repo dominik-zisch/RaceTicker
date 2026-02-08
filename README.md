@@ -69,24 +69,41 @@ The admin panel at **`/admin`** is split into two columns.
 
 ## Setup and running
 
-### 1. Install dependencies
+### 1. Create and activate a virtual environment
 
-From the project root:
+From the project root (requires Python 3.8+):
+
+```bash
+python3 -m venv .venv
+```
+
+Activate it:
+
+- **Linux / macOS:**  
+  `source .venv/bin/activate`
+- **Windows (Command Prompt):**  
+  `.venv\Scripts\activate.bat`
+- **Windows (PowerShell):**  
+  `.venv\Scripts\Activate.ps1`
+
+Your prompt should show `(.venv)` when the environment is active.
+
+### 2. Install dependencies
+
+With the virtual environment activated:
 
 ```bash
 pip install -e .
 ```
 
-(Requires Python 3.8+.)
-
-### 2. Configure
+### 3. Configure
 
 - Copy or edit **`config/config.yaml`**.
 - Set **`app.host`** and **`app.port`** if needed (default `0.0.0.0:5001`).
 - Under **`races.profiles`**, define at least one profile with a **`csv_url`** that returns your race CSV.
 - Set **`races.active_race_id`** to the id of the profile you want to use by default.
 
-### 3. Start the application
+### 4. Start the application
 
 From the project root (so that `config/config.yaml` is found):
 
@@ -98,7 +115,7 @@ Or run the Flask app in your preferred way (e.g. `flask run` with the app factor
 
 The app will start polling the active profile’s CSV URL and serve the display and admin pages.
 
-### 4. Open the display (e.g. on the LED wall machine)
+### 5. Open the display (e.g. on the LED wall machine)
 
 1. On the machine connected to the LED panel, open a browser and go to **`http://<host>:5001/display`** (use the server’s IP or `localhost` if on the same machine).
 2. Put the window in fullscreen:
@@ -110,6 +127,6 @@ The app will start polling the active profile’s CSV URL and serve the display 
    - Example (macOS):  
      `open -a "Google Chrome" --args --kiosk http://localhost:5001/display`
 
-### 5. Use the admin panel
+### 6. Use the admin panel
 
 Open **`http://<host>:5001/admin`** on the same device or from another computer on the network. Use it to switch race profiles, change ticker settings, control the race clock, freeze updates, and monitor data status and the CSV preview.
