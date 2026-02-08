@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from ..ingest.parser import RaceState
+from ..display.controller import _y_px_from_ticker
 
 
 def format_ticker_text(race_state: RaceState, config: dict[str, Any]) -> str:
@@ -88,7 +89,7 @@ def build_payload(
             "font_size_px": ticker.get("font_size_px", 64),
             "letter_spacing_px": ticker.get("letter_spacing_px", 1),
             "text_color": display.get("text_color", "#ff9900"),
-            "y_px": ticker.get("y_px", 120),
+            "y_px": _y_px_from_ticker(ticker),
         },
         "scroll": {
             "speed_px_s": ticker.get("speed_px_s", 180),

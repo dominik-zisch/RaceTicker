@@ -82,7 +82,7 @@
       fontCustom.value = "";
     }
     document.getElementById("font_size_px").value = t.font_size_px != null ? t.font_size_px : 64;
-    document.getElementById("y_px").value = t.y_px != null ? t.y_px : 120;
+    document.getElementById("y_px").value = t.y_px != null ? t.y_px : 0;
     document.getElementById("fps").value = (cfg.ticker || {}).fps != null ? cfg.ticker.fps : 30;
     document.getElementById("poll_interval_s").value = (cfg.csv || {}).poll_interval_s != null ? cfg.csv.poll_interval_s : 10;
     document.getElementById("race_time_enabled").checked = (cfg.race_time || {}).enabled !== false;
@@ -197,7 +197,7 @@
           ? document.getElementById("font_family_custom").value.trim()
           : document.getElementById("font_family").value) || "monospace",
         font_size_px: Number(document.getElementById("font_size_px").value) || 64,
-        y_px: Number(document.getElementById("y_px").value) || 120,
+        y_px: (function () { var n = Number(document.getElementById("y_px").value); return (Number.isFinite(n) && n >= 0) ? n : 0; })(),
         fps: Number(document.getElementById("fps").value) || 30
       },
       csv: { poll_interval_s: Number(document.getElementById("poll_interval_s").value) || 10 },

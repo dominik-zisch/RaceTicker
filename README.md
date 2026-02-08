@@ -29,7 +29,7 @@ The app is configured via a single YAML file. By default it is loaded from **`co
 | **`races`** | **`active_race_id`**: which profile is currently used. **`profiles`**: map of profile id → `name` and **`csv_url`** (URL that returns the race CSV). You can define multiple profiles (e.g. 10K, Half Marathon, Marathon) and switch them from the admin. |
 | **`csv`** | **`poll_interval_s`**: how often to fetch the CSV (seconds). **`timeout_s`**: HTTP timeout for the fetch. |
 | **`display`** | Ticker content and layout: **`background_color`**, **`text_color`** (hex), **`separator`** between runners (e.g. ` // `), **`max_runners`** (how many runners to show, 1–10), **`sort_runners`**: `runner` (by runner number) or `csv_order`. |
-| **`ticker`** | Scrolling and typography: **`font_family`**, **`font_size_px`**, **`y_px`** (vertical position), **`speed_px_s`**, **`fps`**. |
+| **`ticker`** | Scrolling and typography: **`font_family`**, **`font_size_px`**, **`y_px`** (vertical position of top of text in px; 0 = top of screen), **`speed_px_s`**, **`fps`**. |
 | **`race_time`** | **`insert_every_loops`**: how often to insert the race clock text into the ticker (e.g. every 3 scroll loops). |
 
 The **CSV** is expected to have no header. Columns (in order): runner number, lap number, lap time, and optionally distance. The app deduplicates by runner (keeping the latest lap) and sorts according to `display.sort_runners`.

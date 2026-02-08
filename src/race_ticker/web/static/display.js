@@ -18,12 +18,15 @@
 
   function getStyle(ctx, payload) {
     const style = payload.style || {};
+    var yRaw = style.y_px;
+    var yPx = (typeof yRaw === "number" && !Number.isNaN(yRaw)) ? yRaw : Number(yRaw);
+    if (!Number.isFinite(yPx) || yPx < 0) yPx = 0;
     return {
       backgroundColor: style.background_color || "#000000",
       fontFamily: style.font_family || "monospace",
       fontSizePx: style.font_size_px || 64,
       textColor: style.text_color || "#ff9900",
-      yPx: style.y_px != null ? style.y_px : 120,
+      yPx: yPx,
     };
   }
 
@@ -37,7 +40,7 @@
     const style = getStyle(ctx, payload);
     ctx.font = style.fontSizePx + "px " + style.fontFamily;
     ctx.fillStyle = style.textColor;
-    ctx.textBaseline = "middle";
+    ctx.textBaseline = "top";
     ctx.fillText(payload.ticker_text || "", x, style.yPx);
   }
 

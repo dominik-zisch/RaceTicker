@@ -7,6 +7,18 @@ from typing import Any
 _lock = threading.Lock()
 
 
+def _y_px_from_ticker(ticker: dict[str, Any]) -> int:
+    """Read y_px from ticker config; 0 is valid and must be preserved."""
+    v = ticker.get("y_px")
+    if v is None:
+        return 0
+    try:
+        n = int(v)
+        return max(0, n)
+    except (TypeError, ValueError):
+        return 0
+
+
 def build_default_payload(config: dict[str, Any]) -> dict[str, Any]:
     """Build a default display payload from config (shown until CSV data is loaded)."""
     ticker = config.get("ticker", {})
@@ -26,7 +38,7 @@ def build_default_payload(config: dict[str, Any]) -> dict[str, Any]:
             "font_size_px": ticker.get("font_size_px", 64),
             "letter_spacing_px": ticker.get("letter_spacing_px", 1),
             "text_color": display.get("text_color", "#ff9900"),
-            "y_px": ticker.get("y_px", 120),
+            "y_px": _y_px_from_ticker(ticker),
         },
         "scroll": {
             "speed_px_s": ticker.get("speed_px_s", 180),
@@ -100,7 +112,7 @@ class DisplayController:
             "font_size_px": ticker.get("font_size_px", 64),
             "letter_spacing_px": ticker.get("letter_spacing_px", 1),
             "text_color": display.get("text_color", "#ff9900"),
-            "y_px": ticker.get("y_px", 120),
+            "y_px": _y_px_from_ticker(ticker),
         }
         current["scroll"] = {
             "speed_px_s": ticker.get("speed_px_s", 180),
