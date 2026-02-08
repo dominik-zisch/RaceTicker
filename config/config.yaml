@@ -39,6 +39,6 @@ race_time:
   insert_every_loops: 3
   insert_every_seconds: null
 clock:
-  state: running
-  started_at_utc: '2026-02-08T19:08:05Z'
-  accumulated_s: 0.0
+  state: stopped
+  started_at_utc: null
+  accumulated_s: 0
