@@ -69,6 +69,22 @@ The admin panel at **`/admin`** is split into two columns.
 
 ## Setup and running
 
+### Quick start
+
+1. **Get the project**  
+   Clone or download the repository.
+
+2. **Set up and run**  
+   Create a Python virtual environment, install dependencies, and start the app (see steps 1–4 below). The app runs a web server (default: port 5001).
+
+3. **Display (LED screen)**  
+   On the machine connected to the LED display, open a browser and go to **`http://127.0.0.1:5001/display`** (or `http://<IP>:5001/display` if the server is on another machine). Put the browser in **full screen mode** (e.g. F11 or kiosk mode).
+
+4. **Admin panel**  
+   In another browser tab or on another machine on the same network, open **`http://127.0.0.1:5001/admin`** (same machine) or **`http://<IP>:5001/admin`** (use the IP of the machine running the app / connected to the LED display). Use the admin to configure position, size, speed, colors, race profile, clock, and other settings.
+
+---
+
 ### 1. Create and activate a virtual environment
 
 From the project root (requires Python 3.8+):
