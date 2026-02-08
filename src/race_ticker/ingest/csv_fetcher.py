@@ -21,7 +21,8 @@ def _build_and_set_pending(race_state: RaceState, config: dict) -> None:
     version = get_display_controller().get_next_version()
     race_time_str = get_clock().get_elapsed_display()
     payload = build_payload(race_state, config, version=version, race_time_str=race_time_str)
-    get_display_controller().set_pending_payload(payload)
+    # Set active immediately so display sees new queued ticker on next poll (no blank gap).
+    get_display_controller().set_active_payload(payload)
 
 
 logger = logging.getLogger(__name__)

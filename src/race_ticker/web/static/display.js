@@ -15,7 +15,6 @@
   let lastUpdateTime = 0;
   let lastDrawTime = 0;
   let rafId = null;
-  let loopCount = 0;
 
   function getStyle(ctx, payload) {
     const style = payload.style || {};
@@ -49,55 +48,6 @@
     }
   }
 
-  function loopComplete(payload) {
-    stopLoop();
-    fetch("/api/loop_complete", { method: "POST" })
-      .then(function (res) {
-        if (!res.ok) throw new Error("loop_complete failed");
-        return res.json();
-      })
-      .then(function (data) {
-        console.log("loop_complete response:", data);
-        if (data.swapped) {
-          fetchAndStartScroll();
-          return;
-        }
-        loopCount++;
-        const everyLoops = payload.show_race_time_every_loops != null ? payload.show_race_time_every_loops : 3;
-        if (everyLoops > 0 && loopCount % everyLoops === 0) {
-          fetch("/api/clock")
-            .then(function (r) { return r.json(); })
-            .then(function (clock) {
-              const raceTimePayload = Object.assign({}, payload, {
-                ticker_text: "RACE TIME: " + (clock.elapsed_display || "0:00")
-              });
-              scrollX = canvas.width;
-              lastUpdateTime = performance.now();
-              lastDrawTime = lastUpdateTime;
-              runLoop(raceTimePayload);
-            })
-            .catch(function () {
-              scrollX = canvas.width;
-              lastUpdateTime = performance.now();
-              lastDrawTime = lastUpdateTime;
-              runLoop(lastPayload || payload);
-            });
-        } else {
-          scrollX = canvas.width;
-          lastUpdateTime = performance.now();
-          lastDrawTime = lastUpdateTime;
-          runLoop(lastPayload || payload);
-        }
-      })
-      .catch(function (err) {
-        console.error(err);
-        scrollX = canvas.width;
-        lastUpdateTime = performance.now();
-        lastDrawTime = lastUpdateTime;
-        runLoop(lastPayload || payload);
-      });
-  }
-
   function runLoop(payload) {
     const ctx = canvas.getContext("2d");
     if (!ctx || !payload) return;
@@ -116,9 +66,9 @@
       lastUpdateTime = now;
       scrollX -= speedPxS * deltaS;
 
+      // Loop the same content so the screen is never blank (next segment right behind last).
       if (scrollX + textWidth < 0) {
-        loopComplete(payload, targetFps);
-        return;
+        scrollX += textWidth;
       }
 
       if (now - lastDrawTime >= frameIntervalMs) {
@@ -136,13 +86,16 @@
   }
 
   function applyNewPayload(payload) {
-    lastPayload = payload;
-    loopCount = 0;
     stopLoop();
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const isFirstLoad = lastPayload === null;
+    lastPayload = payload;
     textWidth = measureText(ctx, payload);
-    scrollX = canvas.width;
+    // Only start from the right on first load; otherwise keep scroll position so next segment follows (no blank).
+    if (isFirstLoad) {
+      scrollX = canvas.width;
+    }
     lastUpdateTime = performance.now();
     lastDrawTime = lastUpdateTime;
     runLoop(payload);

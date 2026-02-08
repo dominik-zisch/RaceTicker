@@ -8,7 +8,7 @@ _lock = threading.Lock()
 
 
 def build_default_payload(config: dict[str, Any]) -> dict[str, Any]:
-    """Build a default display payload from config (for initial/placeholder content)."""
+    """Build a default display payload from config (shown until CSV data is loaded)."""
     ticker = config.get("ticker", {})
     display = config.get("display", {})
     race_time = config.get("race_time", {})
@@ -17,7 +17,7 @@ def build_default_payload(config: dict[str, Any]) -> dict[str, Any]:
     return {
         "version": 1,
         "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "ticker_text": "NR.01 LAP 0 TIME 0:00 // NR.02 LAP 0 TIME 0:00",
+        "ticker_text": "Loading Data",
         "race_time_text": "RACE TIME: 0:00:00",
         "show_race_time_every_loops": show_every_loops,
         "style": {
@@ -61,6 +61,12 @@ class DisplayController:
         with _lock:
             self._pending_payload = payload
 
+    def set_active_payload(self, payload: dict[str, Any]) -> None:
+        """Set payload as active immediately (e.g. when CSV data updates). Clears pending."""
+        with _lock:
+            self._active_payload = payload
+            self._pending_payload = None
+
     def refresh_pending_from_config(self, config: dict[str, Any]) -> None:
         """Rebuild pending payload from current active content but with new config (style/scroll).
         Call after ticker/display/race_time config change so the next loop uses new settings.
@@ -102,12 +108,13 @@ class DisplayController:
         }
         try:
             from ..ingest.csv_fetcher import get_race_state
-            from ..format.formatter import format_ticker_text
+            from ..format.formatter import build_queued_ticker_text
             from ..clock.clock import get_clock
             rs = get_race_state()
             if rs is not None:
-                current["ticker_text"] = format_ticker_text(rs, config)
-                current["race_time_text"] = "RACE TIME: " + get_clock().get_elapsed_display()
+                race_time_str = get_clock().get_elapsed_display()
+                current["ticker_text"] = build_queued_ticker_text(rs, config, race_time_str=race_time_str)
+                current["race_time_text"] = "RACE TIME: " + race_time_str
         except Exception:
             pass
         with _lock:
