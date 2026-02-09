@@ -14,6 +14,35 @@
 
   var lastConfig = null;
 
+  // Valid template tags
+  const VALID_TEMPLATE_TAGS = ["runner", "lap", "lap_time", "distance"];
+
+  function validateTemplate(template) {
+    if (!template || typeof template !== "string") {
+      return { valid: false, error: "Template must be a non-empty string" };
+    }
+    // Find all {tag} or {tag:format} patterns
+    const tagPattern = /\{([^}:]+)(?::[^}]*)?\}/g;
+    const matches = [];
+    let match;
+    while ((match = tagPattern.exec(template)) !== null) {
+      matches.push(match[1]);
+    }
+    // Check for unmatched braces
+    const openBraces = (template.match(/\{/g) || []).length;
+    const closeBraces = (template.match(/\}/g) || []).length;
+    if (openBraces !== closeBraces) {
+      return { valid: false, error: "Unmatched braces in template" };
+    }
+    // Validate all tags
+    for (var i = 0; i < matches.length; i++) {
+      if (VALID_TEMPLATE_TAGS.indexOf(matches[i]) === -1) {
+        return { valid: false, error: "Invalid tag: {" + matches[i] + "}. Valid tags are: " + VALID_TEMPLATE_TAGS.join(", ") };
+      }
+    }
+    return { valid: true };
+  }
+
   function loadConfig() {
     return api("/api/config").then(function (r) {
       if (!r.ok) throw new Error("Config load failed");
@@ -59,6 +88,7 @@
     document.getElementById("background_color").value = toHexColor(d.background_color, "#000000");
     document.getElementById("text_color").value = toHexColor(d.text_color, "#ff9900");
     document.getElementById("separator").value = d.separator != null ? d.separator : " // ";
+    document.getElementById("template").value = d.template != null ? d.template : "NR.{runner:02d} LAP {lap} TIME {lap_time}";
     document.getElementById("max_runners").value = d.max_runners != null ? d.max_runners : 10;
     document.getElementById("sort_runners").value = (d.sort_runners === "csv_order" ? "csv_order" : "runner");
     document.getElementById("speed_px_s").value = t.speed_px_s != null ? t.speed_px_s : 180;
@@ -183,11 +213,18 @@
   });
 
   document.getElementById("save-ticker").addEventListener("click", function () {
+    var template = document.getElementById("template").value.trim();
+    var templateValidation = validateTemplate(template);
+    if (!templateValidation.valid) {
+      showMessage("Template error: " + templateValidation.error, true);
+      return;
+    }
     var patch = {
       display: {
         background_color: document.getElementById("background_color").value.trim() || "#000000",
         text_color: document.getElementById("text_color").value.trim() || "#ff9900",
         separator: document.getElementById("separator").value,
+        template: template,
         max_runners: Number(document.getElementById("max_runners").value) || 10,
         sort_runners: document.getElementById("sort_runners").value === "csv_order" ? "csv_order" : "runner"
       },

@@ -1,6 +1,52 @@
 """Configuration schema and validation."""
 
+import re
 from typing import Any, Dict
+
+# Valid template tags
+VALID_TEMPLATE_TAGS = {"runner", "lap", "lap_time", "distance"}
+
+
+def _validate_template(template: str | None) -> None:
+    """Validate template string format and tags.
+    
+    Args:
+        template: Template string to validate (e.g., "NR.{runner:02d} LAP {lap} TIME {lap_time}")
+    
+    Raises:
+        ValueError: If template is invalid
+    """
+    if template is None:
+        return  # Optional field
+    
+    if not isinstance(template, str):
+        raise ValueError("display.template must be a string")
+    
+    if not template.strip():
+        raise ValueError("display.template cannot be empty")
+    
+    # Find all {tag} or {tag:format} patterns
+    tag_pattern = re.compile(r"\{([^}:]+)(?::[^}]*)?\}")
+    matches = tag_pattern.findall(template)
+    
+    # Check for unmatched braces
+    open_braces = template.count("{")
+    close_braces = template.count("}")
+    if open_braces != close_braces:
+        raise ValueError("display.template has unmatched braces")
+    
+    # Validate all tags
+    invalid_tags = []
+    for tag in matches:
+        if tag not in VALID_TEMPLATE_TAGS:
+            invalid_tags.append(tag)
+    
+    if invalid_tags:
+        valid_tags_str = ", ".join(sorted(VALID_TEMPLATE_TAGS))
+        raise ValueError(
+            f"display.template contains invalid tags: {', '.join(set(invalid_tags))}. "
+            f"Valid tags are: {valid_tags_str}"
+        )
 
 
 def validate_config(config: Dict[str, Any]) -> None:
@@ -45,6 +91,7 @@ def validate_config(config: Dict[str, Any]) -> None:
         raise ValueError("Missing 'display' section")
     if not isinstance(config["display"].get("max_runners"), int) or config["display"].get("max_runners") < 1:
         raise ValueError("display.max_runners must be a positive integer")
+    _validate_template(config["display"].get("template"))
     
     # Ticker section
     if "ticker" not in config:
@@ -89,3 +136,6 @@ def validate_patch(patch: Dict[str, Any]) -> None:
     if "display" in patch and "sort_runners" in patch["display"]:
         if patch["display"]["sort_runners"] not in ("runner", "csv_order"):
             raise ValueError("display.sort_runners must be 'runner' or 'csv_order'")
+    
+    if "display" in patch and "template" in patch["display"]:
+        _validate_template(patch["display"]["template"])

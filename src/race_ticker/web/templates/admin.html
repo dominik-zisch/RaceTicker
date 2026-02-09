@@ -27,6 +27,10 @@
       <p><label>Background color <input type="color" id="background_color" value="#000000"></label></p>
       <p><label>Text color <input type="color" id="text_color" value="#ff9900"></label></p>
       <p><label>Separator <input type="text" id="separator" placeholder=" // "></label></p>
+      <p>
+        <label>Template <input type="text" id="template" placeholder="NR.{runner:02d} LAP {lap} TIME {lap_time}" style="width:100%;max-width:400px;"></label>
+        <small style="display:block; color:#666; margin-top:0.25rem;">Valid tags: {runner}, {lap}, {lap_time}, {distance}. Format: {runner:02d} for zero-padding.</small>
+      </p>
       <p><label>Max runners <input type="number" id="max_runners" min="1" max="10"></label></p>
       <p>
         <label>Sort runners
