@@ -1,0 +1,23 @@
+services:
+  race-ticker:
+    # Option 1: Build from source (uncomment to use)
+    # build: .
+    # Option 2: Pull from Docker Hub (recommended for clients)
+    image: dominikzisch/race-ticker:latest
+    container_name: race-ticker
+    ports:
+      - "5001:5001"
+    volumes:
+      # Named volume for config - admin panel changes persist here
+      - race-ticker-config:/app/config
+      # Named volume for logs - logs persist here
+      - race-ticker-logs:/app/logs
+    restart: unless-stopped
+
+volumes:
+  race-ticker-config:
+  race-ticker-logs:
+    # Optional: set environment variables to override config
+    # environment:
+    #   - RACE_TICKER_HOST=0.0.0.0
+    #   - RACE_TICKER_PORT=5001

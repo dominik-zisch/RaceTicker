@@ -4,6 +4,31 @@ Race Ticker is a Python web application that drives a large LED wall (or any dis
 
 ---
 
+## Quick Start for Clients
+
+**Install Docker Desktop** from [docker.com/get-docker](https://www.docker.com/get-docker) and start it. Create a file named `docker-compose.yml` with this content (replace `dominikzisch` with the actual Docker Hub username if different):
+
+```yaml
+services:
+  race-ticker:
+    image: dominikzisch/race-ticker:latest
+    container_name: race-ticker
+    ports:
+      - "5001:5001"
+    volumes:
+      - race-ticker-config:/app/config
+      - race-ticker-logs:/app/logs
+    restart: unless-stopped
+
+volumes:
+  race-ticker-config:
+  race-ticker-logs:
+```
+
+Open a terminal in the folder containing `docker-compose.yml` and run `docker-compose up -d`. The app will download and start automatically. Open `http://localhost:5001/admin` in a browser to configure race profiles, CSV URLs, ticker appearance, and all other settings—no files to edit, everything is done through the web interface. The display is available at `http://localhost:5001/display` (put this in fullscreen on your LED screen).
+
+---
+
 ## User-facing URLs
 
 | URL | Description |
@@ -75,7 +100,9 @@ The admin panel at **`/admin`** is split into two columns.
    Clone or download the repository.
 
 2. **Set up and run**  
-   Create a Python virtual environment, install dependencies, and start the app (see steps 1–4 below). The app runs a web server (default: port 5001).
+   **Option A (Docker)**: Use Docker Compose (see [Running with Docker](#running-with-docker-recommended) section).  
+   **Option B (Manual)**: Create a Python virtual environment, install dependencies, and start the app (see [Manual setup](#manual-setup-without-docker) section below).  
+   The app runs a web server (default: port 5001).
 
 3. **Display (LED screen)**  
    On the machine connected to the LED display, open a browser and go to **`http://127.0.0.1:5001/display`** (or `http://<IP>:5001/display` if the server is on another machine). Put the browser in **full screen mode** (e.g. F11 or kiosk mode).
@@ -84,6 +111,176 @@ The admin panel at **`/admin`** is split into two columns.
    In another browser tab or on another machine on the same network, open **`http://127.0.0.1:5001/admin`** (same machine) or **`http://<IP>:5001/admin`** (use the IP of the machine running the app / connected to the LED display). Use the admin to configure position, size, speed, colors, race profile, clock, and other settings.
 
 ---
+
+## Running with Docker (recommended)
+
+Docker makes it easy to run Race Ticker without setting up Python environments.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) installed
+- [Docker Compose](https://docs.docker.com/compose/install/) (optional, but recommended)
+
+### Quick start with Docker
+
+#### Option A: Pull from Docker Hub (recommended for clients)
+
+The Docker image is fully self-contained—no need to clone the repository or manage config files. All configuration is done via the admin panel.
+
+1. **Get docker-compose.yml**  
+   Download or create a `docker-compose.yml` file with this content (replace `YOUR_DOCKERHUB_USERNAME` with the actual username):
+   ```yaml
+   services:
+     race-ticker:
+       image: YOUR_DOCKERHUB_USERNAME/race-ticker:latest
+       container_name: race-ticker
+       ports:
+         - "5001:5001"
+       volumes:
+         - race-ticker-config:/app/config
+         - race-ticker-logs:/app/logs
+       restart: unless-stopped
+   
+   volumes:
+     race-ticker-config:
+     race-ticker-logs:
+   ```
+
+2. **Run the container**
+   ```bash
+   docker-compose up -d
+   ```
+   
+   Or run with Docker directly (using named volumes):
+   ```bash
+   docker run -d -p 5001:5001 \
+     -v race-ticker-config:/app/config \
+     -v race-ticker-logs:/app/logs \
+     --name race-ticker \
+     --restart unless-stopped \
+     YOUR_DOCKERHUB_USERNAME/race-ticker:latest
+   ```
+
+3. **Configure via admin panel**  
+   Open **`http://localhost:5001/admin`** and configure:
+   - Race profile CSV URLs
+   - Ticker appearance (position, size, speed, colors, etc.)
+   - Race clock settings
+   - All changes are saved automatically and persist across container restarts
+
+#### Option B: Build from source
+
+1. **Build and run**  
+   Update `docker-compose.yml` to uncomment `build: .` and comment out `image:`, then:
+   ```bash
+   docker-compose up -d --build
+   ```
+   
+   Or using Docker directly:
+   ```bash
+   docker build -t race-ticker .
+   docker run -d -p 5001:5001 \
+     -v race-ticker-config:/app/config \
+     -v race-ticker-logs:/app/logs \
+     --name race-ticker \
+     --restart unless-stopped \
+     race-ticker
+   ```
+
+2. **Configure via admin panel**  
+   Open **`http://localhost:5001/admin`** to configure all settings. The default config is included in the image, but you can customize everything via the web interface.
+
+### Access the app
+
+- Display: **`http://localhost:5001/display`**  
+- Admin: **`http://localhost:5001/admin`**
+
+### Docker details
+
+- **Self-contained**: The image includes default configuration—no need to clone the repository or manage config files. All configuration is done via the admin panel at `/admin`.
+- **Ports**: The container exposes port 5001 (configurable via admin panel). Map it to any host port: `-p 8080:5001` to access on port 8080.
+- **Volumes**: Uses Docker named volumes for persistence:
+  - `race-ticker-config`: Stores configuration (admin panel changes persist here)
+  - `race-ticker-logs`: Stores log files
+- **Restart**: The container is set to restart automatically unless stopped manually.
+- **View logs**: `docker-compose logs -f` or `docker logs -f race-ticker`
+- **Stop**: `docker-compose down` or `docker stop race-ticker`
+- **Access volumes** (if needed):
+  - Config: `docker volume inspect race-ticker-config`
+  - Logs: `docker volume inspect race-ticker-logs`
+
+### Publishing to Docker Hub
+
+#### Initial publish
+
+1. **Log in to Docker Hub**
+   ```bash
+   docker login
+   ```
+
+2. **Build and push** (using helper script):
+   ```bash
+   DOCKERHUB_USERNAME=yourusername ./scripts/docker-push.sh
+   ```
+   
+   Or manually:
+   ```bash
+   docker build -t YOUR_DOCKERHUB_USERNAME/race-ticker:latest .
+   docker push YOUR_DOCKERHUB_USERNAME/race-ticker:latest
+   ```
+
+3. **Update docker-compose.yml**  
+   Replace `YOUR_DOCKERHUB_USERNAME` in `docker-compose.yml` with your actual Docker Hub username, or have clients update it.
+
+#### Updating the image
+
+After making code changes, rebuild and push the updated image:
+
+**Using the helper script** (recommended):
+```bash
+# Set your Docker Hub username (or export it in your shell profile)
+export DOCKERHUB_USERNAME=yourusername
+
+# Push latest version
+./scripts/docker-push.sh
+
+# Or push a specific version tag
+./scripts/docker-push.sh v1.0.1
+```
+
+**Manually**:
+```bash
+docker build -t YOUR_DOCKERHUB_USERNAME/race-ticker:latest .
+docker push YOUR_DOCKERHUB_USERNAME/race-ticker:latest
+```
+
+**Clients update**:
+```bash
+docker-compose pull
+docker-compose up -d
+```
+
+Or:
+```bash
+docker pull YOUR_DOCKERHUB_USERNAME/race-ticker:latest
+docker-compose restart
+```
+
+**Note**: Client configuration (stored in the `race-ticker-config` volume) persists across image updates. Only code changes require pulling a new image.
+
+### Updating configuration
+
+All configuration is done via the admin panel at `/admin`. Changes are saved automatically and persist across container restarts. No need to edit files or restart the container—just use the web interface.
+
+If you need to reset to defaults, you can remove the config volume:
+```bash
+docker-compose down -v  # Removes volumes
+docker-compose up -d    # Starts fresh with default config
+```
+
+---
+
+## Manual setup (without Docker)
 
 ### 1. Create and activate a virtual environment
 
