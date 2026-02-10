@@ -1,5 +1,14 @@
 /* Admin UI – simple, elegant, flat, modern */
 
+/* Custom font for previewing ticker text in admin.
+   Uses src/race_ticker/web/static/fonts/AcuminVariableConcept.otf */
+@font-face {
+  font-family: "RaceTickerCustom";
+  src: url("/static/fonts/AcuminVariableConcept.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --bg-page: #f8f9fa;
   --bg-card: #ffffff;

@@ -94,14 +94,30 @@
     if (!ctx) return;
     const isFirstLoad = lastPayload === null;
     lastPayload = payload;
-    textWidth = measureText(ctx, payload);
-    // Only start from the right on first load; otherwise keep scroll position so next segment follows (no blank).
-    if (isFirstLoad) {
-      scrollX = canvas.width;
+
+    // Ensure custom/web fonts are loaded before measuring/drawing, so the
+    // actual font metrics are used instead of a fallback.
+    const style = getStyle(ctx, payload);
+    const fontSpec = style.fontSizePx + "px " + style.fontFamily;
+
+    const start = function () {
+      textWidth = measureText(ctx, payload);
+      // Only start from the right on first load; otherwise keep scroll position so next segment follows (no blank).
+      if (isFirstLoad) {
+        scrollX = canvas.width;
+      }
+      lastUpdateTime = performance.now();
+      lastDrawTime = lastUpdateTime;
+      runLoop(payload);
+    };
+
+    if (document.fonts && document.fonts.load) {
+      document.fonts.load(fontSpec).then(start).catch(function () {
+        start();
+      });
+    } else {
+      start();
     }
-    lastUpdateTime = performance.now();
-    lastDrawTime = lastUpdateTime;
-    runLoop(payload);
   }
 
   function fetchAndStartScroll() {

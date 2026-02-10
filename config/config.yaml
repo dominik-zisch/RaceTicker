@@ -27,7 +27,7 @@ display:
   max_runners: 3
   sort_runners: csv_order
 ticker:
-  font_family: monospace
+  font_family: RaceTickerCustom, monospace
   font_size_px: 64
   letter_spacing_px: 1
   y_px: 0
